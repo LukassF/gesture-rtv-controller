@@ -4,9 +4,9 @@ import numpy as np
 
 def create_trackbars():
     cv2.namedWindow("Trackbars")
-    cv2.createTrackbar("L - Y", "Trackbars", 0, 255, lambda x: None)
-    cv2.createTrackbar("L - Cr", "Trackbars", 152, 255, lambda x: None)
-    cv2.createTrackbar("L - Cb", "Trackbars", 78, 255, lambda x: None)
+    cv2.createTrackbar("L - Y", "Trackbars", 38, 255, lambda x: None)
+    cv2.createTrackbar("L - Cr", "Trackbars", 161, 255, lambda x: None)
+    cv2.createTrackbar("L - Cb", "Trackbars", 74, 255, lambda x: None)
     cv2.createTrackbar("U - Y", "Trackbars", 255, 255, lambda x: None)
     cv2.createTrackbar("U - Cr", "Trackbars", 193, 255, lambda x: None)
     cv2.createTrackbar("U - Cb", "Trackbars", 195, 255, lambda x: None)

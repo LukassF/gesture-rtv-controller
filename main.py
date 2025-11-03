@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 
 from constants import HISTORY_LENGTH
 from utils.classifier import compute_hog_features, preprocess_hand
-from utils.gui import create_trackbars, get_values_from_trackbars
+from utils.dataset import handle_save_image
 from utils.video import (
     display_combined,
     draw_prediction,
@@ -27,16 +27,15 @@ def video():
     scaler, pca, model = load_pipeline()
     history = deque(maxlen=HISTORY_LENGTH)
     cap = cv2.VideoCapture(0)
-    create_trackbars()
+    # create_trackbars()
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
         frame = cv2.flip(frame, 1)
-
-        lower, upper = get_values_from_trackbars()
-        mask = preprocess_frame(frame, lower, upper)
+        mask, prob = preprocess_frame(frame)
+        cv2.imshow("Skin Probability Map", prob)
         contours = find_valid_contours(mask)
 
         if not contours:
@@ -57,7 +56,7 @@ def video():
 
         contour, confidence, pred_class = best
         cropped_bin_filled = get_cropped_bin(frame, mask, contour)
-
+        # handle_save_image(cropped_bin_filled)
         history.append(pred_class)
         draw_prediction(frame, pred_class, history, HISTORY_LENGTH)
 
@@ -81,7 +80,15 @@ def video():
 
 
 def train_model():
-    labels_dict = {"one": 0, "two": 1, "three": 2, "four": 3, "five": 4}
+    labels_dict = {
+        "one": 0,
+        "two": 1,
+        "three": 2,
+        "four": 3,
+        "five": 4,
+        "thumbs_up": 5,
+        "thumbs_down": 6,
+    }
     data_dir = "data/raw"
     X = []
     y = []
@@ -114,7 +121,7 @@ def train_model():
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     print(X_scaled.shape)
-    pca = PCA(n_components=25)
+    pca = PCA(n_components=100)
     X_pca = pca.fit_transform(X_scaled)
 
     print("X_pca shape:", X_pca.shape)
